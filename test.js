@@ -2,6 +2,7 @@
 var test      = require('tap').test
   , seneca    = require('seneca')
   , importer  = require('./')
+  , Joi       = require('joi')
 
 test('importing csv lines as entities', function(t) {
   var s         = seneca()
@@ -117,4 +118,31 @@ test('skipping the first N rows for acting', function(t) {
 
   instance.write('name,price\na,400\n')
   instance.end('hello,200\n')
+})
+
+test('converting values', function(t) {
+  var s         = seneca()
+    , event     = s.make('event')
+    , schema    = Joi.object().keys({
+          name: Joi.string()
+        , price: Joi.number().integer()
+        , date: Joi.date()
+      })
+    , instance  = importer.entity(s, 'event', { schema: schema })
+    , now       = new Date()
+
+  instance.write('name,price,date\n')
+  instance.end('hello,200,' + now.toISOString()+ '\n')
+
+  instance.on('importCompleted', function() {
+    event.list$({}, function(err, res) {
+      t.notOk(err, 'no error')
+      t.equal(res.length, 1, 'one result')
+      t.equal(res[0].name, 'hello', 'same name')
+      t.equal(res[0].price, 200, 'same price')
+      t.deepEqual(res[0].date, now, 'same date')
+
+      t.end()
+    })
+  })
 })

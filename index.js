@@ -4,6 +4,7 @@ var entityStream  = require('seneca-entity-save-stream')
   , headStream    = require('head-stream')
   , through       = require('through2')
   , xtend         = require('xtend')
+  , Joi           = require('joi')
 
 function csvToObj(dest, opts) {
   var csv   = csvStream()
@@ -26,10 +27,24 @@ function csvToObj(dest, opts) {
 
     head
       .pipe(through.obj({ highWaterMark: 16 }, function (chunk, enc, callback) {
-        if (count++ >= opts.skip) {
-          this.push(rowToObject(chunk))
+        if (count++ < opts.skip) {
+          return callback()
         }
-        callback()
+
+        var obj   = rowToObject(chunk)
+          , that  = this
+
+        if (!opts.schema) {
+          this.push(obj)
+          callback()
+        } else {
+          Joi.validate(obj, opts.schema, { convert: true }, function(err, obj) {
+            if (!err) {
+              that.push(obj)
+            }
+            callback()
+          })
+        }
       }))
       .pipe(dest)
 
