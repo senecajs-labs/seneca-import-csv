@@ -3,7 +3,7 @@
 var importer    = require('../')
   , ProgressBar = require('progress')
   , fs          = require('fs')
-  , through     = require('through2')
+  , csv         = require('csv2')
 
   , argv = require('yargs')
     .usage('Usage: $0 -e entity -f file -c config')
@@ -16,30 +16,70 @@ var importer    = require('../')
     .describe('c', 'the config of the seneca data store')
     .argv
 
-  , seneca = require('seneca')({
-      log:{
-        map:[
-          {level:'warn',handler:'print'}
-        ]
-      }
-    })
+function doImport(total) {
 
-  , stat = fs.statSync(argv.file)
+  var seneca = require('seneca')({
+        log:{
+          map:[
+            {level:'warn',handler:'print'}
+          ]
+        }
+      })
 
-  , bar = new ProgressBar('importing [:bar] :percent :etas', {
-        width: 20
-      , incomplete: ' '
-      , total: stat.size
-    })
+    , bar = new ProgressBar('importing [:bar] :percent :etas', {
+          width: 20
+        , incomplete: ' '
+        , total: total
+      })
 
-  , tracker = through(function(chunk, enc, done) {
-      bar.tick(chunk.length)
-      this.push(chunk, enc)
-      done()
-    })
+    , dest = importer.entity(seneca, argv.entity)
 
-fs.createReadStream(argv.file)
-  .pipe(tracker)
-  .pipe(importer.entity(seneca, argv.entity))
+    , config = JSON.parse(fs.readFileSync(argv.config))
 
-bar.tick()
+  seneca.use(config.store, config.opts)
+
+  seneca.ready(function() {
+    fs.createReadStream(argv.file)
+      .pipe(dest)
+  })
+
+  dest.on('rowImported', function() {
+    bar.tick()
+  })
+
+  dest.on('importCompleted', function() {
+    console.log()
+    console.log('Imported', dest.rowsImported, 'rows')
+  })
+}
+
+function computeTotal() {
+
+  var stat = fs.statSync(argv.file)
+
+    , bar = new ProgressBar('checking  [:bar] :percent :etas', {
+          width: 20
+        , incomplete: ' '
+        , total: stat.size
+      })
+
+    , total = 0
+
+    , fileStream = fs.createReadStream(argv.file)
+
+    , csvStream  = fileStream.pipe(csv())
+
+  fileStream.on('data', function(chunk) {
+    bar.tick(chunk.length)
+  })
+
+  csvStream.on('end', function() {
+    doImport(total)
+  })
+
+  csvStream.on('data', function(row) {
+    total++
+  })
+}
+
+computeTotal()

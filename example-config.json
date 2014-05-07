@@ -1,0 +1,6 @@
+{
+  "store": "jsonfile-store",
+  "opts": {
+    "folder": "./db"
+  }
+}
