@@ -10,13 +10,13 @@ Standalone Usage
 ### Install
 
 ```bash
-npm install seneca-import-csv -g
+$ npm install seneca-import-csv -g
 ```
 
 ### Run
 
 ```bash
-seneca-import-csv.js -f your-csv.csv -e your-entity -c ./example-config.json
+$ seneca-import-csv.js -f your-csv.csv -e your-entity -c ./example-config.json
 checking  [===================] 100% 0.0s
 importing [==                 ] 14% 16.8s
 ```
@@ -30,6 +30,21 @@ importing [==                 ] 14% 16.8s
     "folder": "./db"
   }
 }
+```
+
+### Auto resume
+
+SenecaImportCSV allows to resume a previously stopped (or crashed)
+import sequence.
+
+```bash
+$ seneca-import-csv.js -f your-csv.csv -e your-entity -c ./example-config.json -r resume-file
+checking  [===================] 100% 0.0s
+importing [                   ] 6% 19.6s^C
+$ seneca-import-csv.js -f your-csv.csv -e your-entity -c ./example-config.json -r resume-file
+checking  [===================] 100% 0.0s
+skipping 502 rows
+importing [==                 ] 14% 8.7s^C
 ```
 
 Embedded Usage

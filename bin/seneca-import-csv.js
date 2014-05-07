@@ -11,9 +11,11 @@ var importer    = require('../')
     .alias('e', 'entity')
     .alias('f', 'file')
     .alias('c', 'config')
+    .alias('r', 'resume')
     .describe('e', 'the entity to import to')
     .describe('f', 'the file to import from')
     .describe('c', 'the config of the seneca data store')
+    .describe('r', 'the file to store the current state, to resume')
     .argv
 
 function doImport(total) {
@@ -32,7 +34,7 @@ function doImport(total) {
         , total: total
       })
 
-    , dest = importer.entity(seneca, argv.entity)
+    , skip = 0
 
     , config = JSON.parse(fs.readFileSync(argv.config))
 
@@ -42,6 +44,30 @@ function doImport(total) {
     fs.createReadStream(argv.file)
       .pipe(dest)
   })
+
+  try {
+    skip = parseInt(fs.readFileSync(argv.resume))
+    console.log('skipping', skip, 'rows')
+    bar.tick(skip)
+  } catch(err) {
+    // not neeed after all
+  }
+
+  if (skip === NaN) {
+    skip = 0
+  }
+
+  dest = importer.entity(seneca, argv.entity, { skip: skip })
+
+  setInterval(function() {
+    var count = dest.rowsImported + skip
+    fs.writeFile(argv.resume, '' + count, function(err) {
+      if (err) {
+        console.log(err)
+      }
+      // nothing to do!
+    })
+  }, 100)
 
   dest.on('rowImported', function() {
     bar.tick()
