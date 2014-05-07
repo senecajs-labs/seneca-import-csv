@@ -37,10 +37,21 @@ function csvToObj(dest, opts) {
       csv.emit('importCompleted')
     })
 
+    dest.on('one', function() {
+      csv.rowsImported++
+      csv.emit('rowImported')
+    })
+
+    dest.on('oneError', function(err) {
+      csv.emit('rowError', err)
+    })
+
     done()
   }
 
   csv.pipe(head)
+
+  csv.rowsImported = 0
 
   return csv
 }

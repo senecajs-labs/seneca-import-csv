@@ -43,6 +43,41 @@ test('skipping the first N rows for entities', function(t) {
   })
 })
 
+test('rowImported event', function(t) {
+  var s         = seneca()
+    , pear      = s.make('pear')
+    , instance  = importer.entity(s, 'pear')
+    , rows      = 0
+
+  instance.on('rowImported', function() {
+    rows++
+  })
+
+  instance.on('importCompleted', function() {
+    t.equal(rows, 2)
+    t.end()
+  })
+
+  instance.write('name,price\na,400\n')
+
+  instance.end('hello,200\n')
+})
+
+test('rowsImported property', function(t) {
+  var s         = seneca()
+    , pear      = s.make('pear')
+    , instance  = importer.entity(s, 'pear')
+
+  instance.on('importCompleted', function() {
+    t.equal(instance.rowsImported, 2)
+    t.end()
+  })
+
+  instance.write('name,price\na,400\n')
+
+  instance.end('hello,200\n')
+})
+
 test('acting on every csv line', function(t) {
   t.plan(1)
 
