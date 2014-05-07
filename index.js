@@ -4,11 +4,9 @@ var entityStream  = require('seneca-entity-save-stream')
   , headStream    = require('head-stream')
   , through       = require('through2')
 
-function importCSV(seneca, opts) {
-
+function csvToObj(dest) {
   var csv   = csvStream()
     , head  = headStream(firstRow)
-    , dest  = buildDestStream(seneca, opts)
 
   function firstRow(header, done) {
 
@@ -41,14 +39,12 @@ function importCSV(seneca, opts) {
   return csv
 }
 
-function buildDestStream(seneca, opts) {
-  if (opts.entity) {
-    return entityStream(seneca, { name$: opts.entity })
-  } else if (opts.act) {
-    return actStream(seneca, opts.act)
-  } else {
-    throw new Error('unknown opts')
-  }
+module.exports.entity = function importEntity(seneca, entity) {
+  var dest = entityStream(seneca, { name$: entity })
+  return csvToObj(dest)
 }
 
-module.exports = importCSV
+module.exports.act = function importAct(seneca, pattern) {
+  var dest = actStream(seneca, pattern)
+  return csvToObj(dest)
+}

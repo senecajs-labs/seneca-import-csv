@@ -6,7 +6,7 @@ var test      = require('tap').test
 test('importing csv lines as entities', function(t) {
   var s         = seneca()
     , pear      = s.make('pear')
-    , instance  = importer(s, { entity: 'pear' })
+    , instance  = importer.entity(s, 'pear')
 
   instance.end('name,price\nhello,200\n')
 
@@ -28,7 +28,7 @@ test('acting on every csv line', function(t) {
   var s         = seneca()
     , pear      = s.make('pear')
     , pattern   = { sample: 'call' }
-    , instance  = importer(s, { act: pattern })
+    , instance  = importer.act(s, pattern)
     , message   = { sample: 'call', name: 'hello', price: '200' }
 
   function check(arrived, done) {
