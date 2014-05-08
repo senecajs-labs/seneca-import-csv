@@ -21,7 +21,15 @@ checking  [===================] 100% 0.0s
 importing [==                 ] 14% 16.8s
 ```
 
+You can also specify a `-r file` flag to say when and how to resume the
+import.
+
 ### Config Example
+
+The importer supports both a JSON-based configuration and a module-based
+configuration.
+
+#### JSON configuration
 
 ```js
 {
@@ -31,6 +39,31 @@ importing [==                 ] 14% 16.8s
   }
 }
 ```
+
+#### module-based configuration
+
+```js
+module.exports = function(seneca, Joi) {
+  seneca.use('jsonfile-store', {
+    "folder": "./db"
+  })
+
+  return Joi.object().keys({
+    Yr: Joi.number().integer(),
+    Mn: Joi.number().integer(),
+    "Date Excel": Joi.number().integer(),
+    Date: Joi.string(),
+    "CO2 [ppm]": Joi.number()
+  })
+}
+```
+
+See the documentation of [Joi](https://github.com/spumko/joi) for all
+the possible options with defining the schema.
+The options passed to the `Joi.validate` functions are `convert: true`
+and `stripUnknown: true`.
+
+#### JSON configuration
 
 ### Auto resume
 
