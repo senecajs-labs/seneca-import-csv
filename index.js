@@ -38,7 +38,10 @@ function csvToObj(dest, opts) {
           this.push(obj)
           callback()
         } else {
-          Joi.validate(obj, opts.schema, { convert: true }, function(err, obj) {
+          Joi.validate(obj, opts.schema, {
+              convert: true
+            , stripUnknown: true
+          }, function(err, obj) {
             if (!err) {
               that.push(obj)
             }

@@ -146,3 +146,29 @@ test('converting values', function(t) {
     })
   })
 })
+
+test('stripping unknown keys', function(t) {
+  var s         = seneca()
+    , event     = s.make('event')
+    , schema    = Joi.object().keys({
+          name: Joi.string()
+        , price: Joi.number().integer()
+      })
+    , instance  = importer.entity(s, 'event', { schema: schema })
+    , now       = new Date()
+
+  instance.write('name,price,date\n')
+  instance.end('hello,200,' + now.toISOString()+ '\n')
+
+  instance.on('importCompleted', function() {
+    event.list$({}, function(err, res) {
+      t.notOk(err, 'no error')
+      t.equal(res.length, 1, 'one result')
+      t.equal(res[0].name, 'hello', 'same name')
+      t.equal(res[0].price, 200, 'same price')
+      t.equal(res[0].date, undefined, 'no date')
+
+      t.end()
+    })
+  })
+})

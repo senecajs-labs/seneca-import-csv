@@ -3,7 +3,9 @@
 var importer    = require('../')
   , ProgressBar = require('progress')
   , fs          = require('fs')
+  , path        = require('path')
   , csv         = require('csv2')
+  , Joi         = require('joi')
 
   , argv = require('yargs')
     .usage('Usage: $0 -e entity -f file -c config')
@@ -36,9 +38,15 @@ function doImport(total) {
 
     , skip = 0
 
-    , config = JSON.parse(fs.readFileSync(argv.config))
+    , config = require(path.resolve(argv.config))
 
-  seneca.use(config.store, config.opts)
+    , schema = config.schema
+
+  if (typeof config === 'object') {
+    seneca.use(config.store, config.opts)
+  } else if (typeof config === 'function') {
+    schema = config(seneca, Joi)
+  }
 
   seneca.ready(function() {
     fs.createReadStream(argv.file)
@@ -57,17 +65,22 @@ function doImport(total) {
     skip = 0
   }
 
-  dest = importer.entity(seneca, argv.entity, { skip: skip })
+  dest = importer.entity(seneca, argv.entity, {
+      skip: skip
+    , schema: schema
+  })
 
-  setInterval(function() {
-    var count = dest.rowsImported + skip
-    fs.writeFile(argv.resume, '' + count, function(err) {
-      if (err) {
-        console.log(err)
-      }
-      // nothing to do!
-    })
-  }, 100)
+  if (argv.resume) {
+    setInterval(function() {
+      var count = dest.rowsImported + skip
+      fs.writeFile(argv.resume, '' + count, function(err) {
+        if (err) {
+          console.log(err)
+        }
+        // nothing to do!
+      })
+    }, 100)
+  }
 
   dest.on('rowImported', function() {
     bar.tick()
