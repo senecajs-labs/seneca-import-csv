@@ -6,7 +6,7 @@ var entityStream  = require('seneca-entity-save-stream')
   , Joi           = require('joi')
 
 function csvToObj(dest, opts) {
-  var csv   = csvStream()
+  var csv   = csvStream({ highWaterMark: 16 })
     , header = null
     , count = 0
 
