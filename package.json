@@ -24,7 +24,6 @@
     "seneca-act-stream": "0.0.2",
     "seneca-entity-save-stream": "0.0.3",
     "seneca": "~0.5.17",
-    "csv2": "0.0.4",
     "through2": "^0.4.1",
     "xtend": "^3.0.0",
     "yargs": "^1.2.1",
@@ -33,6 +32,7 @@
     "seneca-mongo-store": "^0.1.9",
     "seneca-jsonfile-store": "0.1.3",
     "progress": "^1.1.5",
-    "joi": "^4.0.0"
+    "joi": "^4.0.0",
+    "binary-csv": "^0.2.0"
   }
 }

@@ -1,47 +1,33 @@
 var entityStream  = require('seneca-entity-save-stream')
   , actStream     = require('seneca-act-stream')
-  , csvStream     = require('csv2')
+  , csvStream     = require('binary-csv')
   , through       = require('through2')
   , xtend         = require('xtend')
   , Joi           = require('joi')
 
 function csvToObj(dest, opts) {
-  var csv   = csvStream({ highWaterMark: 16 })
-    , header = null
-    , count = 0
+  var csv     = csvStream({
+          highWaterMark: 16
+        , json: true
+      })
+    , count   = 0
 
   opts = xtend({ skip: 0 }, opts)
 
-  function rowToObject(row) {
-    var obj = {}
-
-    for (var i = 0; i < header.length; i++) {
-      obj[header[i]] = row[i]
-    }
-
-    return obj
-  }
-
-  csv.pipe(through.obj({ highWaterMark: 16 }, function (chunk, enc, callback) {
-    if (header === null) {
-      header = chunk
-      return callback()
-    }
-
+  csv.pipe(through.obj({ highWaterMark: 16 }, function (obj, enc, callback) {
     if (count++ < opts.skip) {
       return callback()
     }
 
-    var obj   = rowToObject(chunk)
-      , that  = this
+    var that  = this
 
     if (!opts.schema) {
       this.push(obj)
       callback()
     } else {
       Joi.validate(obj, opts.schema, {
-        convert: true
-            , stripUnknown: true
+          convert: true
+        , stripUnknown: true
       }, function(err, obj) {
         if (!err) {
           that.push(obj)

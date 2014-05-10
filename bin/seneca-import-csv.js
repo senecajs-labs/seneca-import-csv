@@ -4,7 +4,7 @@ var importer    = require('../')
   , ProgressBar = require('progress')
   , fs          = require('fs')
   , path        = require('path')
-  , csv         = require('csv2')
+  , csv         = require('binary-csv')
   , Joi         = require('joi')
 
   , argv = require('yargs')

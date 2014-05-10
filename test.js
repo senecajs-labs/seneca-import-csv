@@ -9,7 +9,7 @@ test('importing csv lines as entities', function(t) {
     , pear      = s.make('pear')
     , instance  = importer.entity(s, 'pear')
 
-  instance.end('name,price\nhello,200\n')
+  instance.end(new Buffer('name,price\nhello,200\n'))
 
   instance.on('importCompleted', function() {
     pear.list$({}, function(err, res) {
@@ -28,9 +28,9 @@ test('skipping the first N rows for entities', function(t) {
     , pear      = s.make('pear')
     , instance  = importer.entity(s, 'pear', { skip: 1 })
 
-  instance.write('name,price\na,400\n')
+  instance.write(new Buffer('name,price\na,400\n'))
 
-  instance.end('hello,200\n')
+  instance.end(new Buffer('hello,200\n'))
 
   instance.on('importCompleted', function() {
     pear.list$({}, function(err, res) {
@@ -59,9 +59,9 @@ test('rowImported event', function(t) {
     t.end()
   })
 
-  instance.write('name,price\na,400\n')
+  instance.write(new Buffer('name,price\na,400\n'))
 
-  instance.end('hello,200\n')
+  instance.end(new Buffer('hello,200\n'))
 })
 
 test('rowsImported property', function(t) {
@@ -74,9 +74,9 @@ test('rowsImported property', function(t) {
     t.end()
   })
 
-  instance.write('name,price\na,400\n')
+  instance.write(new Buffer('name,price\na,400\n'))
 
-  instance.end('hello,200\n')
+  instance.end(new Buffer('hello,200\n'))
 })
 
 test('acting on every csv line', function(t) {
@@ -96,7 +96,7 @@ test('acting on every csv line', function(t) {
 
   s.add(pattern, check);
 
-  instance.end('name,price\nhello,200\n')
+  instance.end(new Buffer('name,price\nhello,200\n'))
 })
 
 test('skipping the first N rows for acting', function(t) {
@@ -116,8 +116,8 @@ test('skipping the first N rows for acting', function(t) {
 
   s.add(pattern, check);
 
-  instance.write('name,price\na,400\n')
-  instance.end('hello,200\n')
+  instance.write(new Buffer('name,price\na,400\n'))
+  instance.end(new Buffer('hello,200\n'))
 })
 
 test('converting values', function(t) {
@@ -131,8 +131,8 @@ test('converting values', function(t) {
     , instance  = importer.entity(s, 'event', { schema: schema })
     , now       = new Date()
 
-  instance.write('name,price,date\n')
-  instance.end('hello,200,' + now.toISOString()+ '\n')
+  instance.write(new Buffer('name,price,date\n'))
+  instance.end(new Buffer('hello,200,' + now.toISOString()+ '\n'))
 
   instance.on('importCompleted', function() {
     event.list$({}, function(err, res) {
@@ -157,8 +157,8 @@ test('stripping unknown keys', function(t) {
     , instance  = importer.entity(s, 'event', { schema: schema })
     , now       = new Date()
 
-  instance.write('name,price,date\n')
-  instance.end('hello,200,' + now.toISOString()+ '\n')
+  instance.write(new Buffer('name,price,date\n'))
+  instance.end(new Buffer('hello,200,' + now.toISOString()+ '\n'))
 
   instance.on('importCompleted', function() {
     event.list$({}, function(err, res) {
