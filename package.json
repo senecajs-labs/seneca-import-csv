@@ -1,6 +1,6 @@
 {
   "name": "seneca-import-csv",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Import your CSV into seneca",
   "main": "index.js",
   "bin": "bin/seneca-import-csv.js",
@@ -16,7 +16,7 @@
     "url": "http://github.com/mcollina/seneca-import-csv/issues"
   },
   "author": "Matteo Collina <hello@matteocollina.com>",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "tap": "^0.4.9"
   },
