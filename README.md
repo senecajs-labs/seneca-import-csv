@@ -135,7 +135,12 @@ instance.write('hello,200\n')
 instance.end('matteo,400\n')
 ```
 
+Acknowledgements
+----------------
+
+This project was kindly sponsored by [nearForm](http://nearform.com).
+
 License
 -------
 
-ISC
+MIT
