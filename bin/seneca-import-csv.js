@@ -106,18 +106,13 @@ function computeTotal() {
 
     , fileStream = fs.createReadStream(argv.file)
 
-    , csvStream  = fileStream.pipe(csv())
-
   fileStream.on('data', function(chunk) {
     bar.tick(chunk.length)
+    total += chunk.toString('utf8').split(/\r\n|[\n\r\u0085\u2028\u2029]/g).length-1;
   })
 
-  csvStream.on('end', function() {
+  fileStream.on('end', function() {
     doImport(total)
-  })
-
-  csvStream.on('data', function(row) {
-    total++
   })
 }
 
