@@ -89,6 +89,7 @@ function doImport(total) {
   dest.on('importCompleted', function() {
     console.log()
     console.log('Imported', dest.rowsImported, 'rows')
+    process.exit(0)
   })
 }
 
