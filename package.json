@@ -7,13 +7,13 @@
   "scripts": {
     "test": "tap test.js"
   },
-  "website": "https://github.com/mcollina/seneca-import-csv",
+  "website": "https://github.com/senecajs-labs/seneca-import-csv",
   "repository": {
     "type": "git",
-    "url": "https://github.com/mcollina/seneca-import-csv.git"
+    "url": "https://github.com/senecajs-labs/seneca-import-csv.git"
   },
   "bugs": {
-    "url": "http://github.com/mcollina/seneca-import-csv/issues"
+    "url": "http://github.com/senecajs-labs/seneca-import-csv/issues"
   },
   "author": "Matteo Collina <hello@matteocollina.com>",
   "license": "MIT",

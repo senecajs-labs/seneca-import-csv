@@ -1,11 +1,11 @@
+![SenecaLogo][]
+> A [Seneca.js][seneca] plugin.
 
-SenecaImportCSV
-===============
+# seneca-import-CSV
 
 Import a CSV into Seneca
 
-Standalone Usage
-----------------
+## Standalone Usage
 
 ### Install
 
@@ -58,7 +58,7 @@ module.exports = function(seneca, Joi) {
 }
 ```
 
-See the documentation of [Joi](https://github.com/spumko/joi) for all
+See the documentation of [Joi](https://github.com/hapijs/joi) for all
 the possible options with defining the schema.
 The options passed to the `Joi.validate` functions are `convert: true`
 and `stripUnknown: true`.
@@ -80,8 +80,7 @@ skipping 502 rows
 importing [==                 ] 14% 8.7s^C
 ```
 
-Embedded Usage
---------------
+## Embedded Usage
 
 ### Install
 
@@ -135,12 +134,19 @@ instance.write('hello,200\n')
 instance.end('matteo,400\n')
 ```
 
-Acknowledgements
-----------------
+## Acknowledgements
 
 This project was kindly sponsored by [nearForm](http://nearform.com).
 
-License
--------
+## Contributing
 
-MIT
+The [Senecajs org][] encourage open participation. If you feel you can help in any way, be it with documentation, examples, extra testing, or new features please get in touch.
+
+## License
+
+Copyright Matteo Collina and other contributors 2014 - 2016, Licensed under [MIT][].
+
+[SenecaLogo]: https://camo.githubusercontent.com/4a0178ff2abf26f9214d4d98bc23eec356ced357/687474703a2f2f73656e6563616a732e6f72672f66696c65732f6173736574732f73656e6563612d6c6f676f2e706e67
+[seneca]: http://senecajs.org/
+[Senecajs org]: https://github.com/senecajs/
+[MIT]: ./LICENSE
